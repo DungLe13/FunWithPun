@@ -1,6 +1,6 @@
-# Pun Location using word2vec and cosine similarities
+#!/usr/bin/env python3
 """
-    data_test.py - Data Pre-processing for Task 1: Pun Dectection
+    task2.py - Task 2: Pun Location using word2vec and cosine similarities
     Author: Dung Le (dungle@bennington.edu)
     Date: 10/17/2017
 """
@@ -49,23 +49,27 @@ def get_pun_word(orig_sent, sent):
 
 if __name__ == "__main__":
     # Load Google's pre-trained Word2Vec model.
-    model = gensim.models.KeyedVectors.load_word2vec_format('sample/GoogleNews-vectors-negative300.bin', binary=True)
+    model = gensim.models.KeyedVectors.load_word2vec_format('../sample/GoogleNews-vectors-negative300.bin', binary=True)
     
     stop_words = set(stopwords.words('english'))
     stop_words.update('.', '?', '-', '\'', '\:', ',', '!', '<', '>', '\"', '/', '(', ')',
                       '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 's', 't', 're', 'm')
 
-    tree = ET.parse('sample/subtask2-homographic-test.xml')
+    # Load dataset from xml file (task 2)
+    tree = ET.parse('../sample/subtask2-homographic-test.xml')
     root = tree.getroot()
     original_sentences = []
     sentences = []
+    text_ids= []
     vocab = model.vocab.keys()
 
     for child in root:
         original_sentence = []
+        text_id = child.attrib['id']
         for i in range(len(child)):
             original_sentence.append(child[i].text.lower())
         original_sentences.append(original_sentence)
+        text_ids.append(text_id)
 
     for child in root:
         sentence = []
@@ -74,11 +78,14 @@ if __name__ == "__main__":
                 sentence.append(child[i].text.lower())
         sentences.append(sentence)
 
+    print(text_ids[0])
     print(original_sentences[0])
     print(sentences[0])
+    print(text_ids[2])
     print(original_sentences[2])
     print(sentences[2])
-    
-    for i in range(len(sentences)):
-        print("hom_{0} hom_{0}_".format(i+1) + str(get_pun_word(original_sentences[i], sentences[i])))
-    print()
+
+    with open("task2_DungLe.txt", "w") as file:
+        for i in range(len(sentences)):
+            result = text_ids[i] + " " + text_ids[i] + "_" + str(get_pun_word(original_sentences[i], sentences[i])) + "\n"
+            file.write(result)
