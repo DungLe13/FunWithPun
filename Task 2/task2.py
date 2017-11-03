@@ -22,17 +22,19 @@ def get_possible_pun_words(sent):
                 scores['{0}-{1}'.format(sent[i], sent[j])] = sim_score
 
         if len(scores) >= 5:
-            top2 = sorted(zip(scores.values(), scores.keys()), reverse=True)[:2]
-            poss = [tup[1].split(sep='-') for tup in top2]
-            possible_pun_words = set(poss[0] + poss[1])
+            top3 = sorted(zip(scores.values(), scores.keys()), reverse=True)[:3]
+            poss = [tup[1].split(sep='-') for tup in top3]
+            possible_pun_words = set(poss[0] + poss[1] + poss[2])
         else:
-            #poss = [pair.split(sep='-') for pair in scores.keys()]
-            #possible_pun_words = set()
-            #for i in range(len(poss)):
-            #    possible_pun_words = possible_pun_words.union(set(poss[i]))
+            poss = [pair.split(sep='-') for pair in scores.keys()]
+            possible_pun_words = set()
+            for i in range(len(poss)):
+                possible_pun_words = possible_pun_words.union(set(poss[i]))
+            """
             top = sorted(zip(scores.values(), scores.keys()), reverse=True)[:1]
             poss = [tup[1].split(sep='-') for tup in top]
             possible_pun_words = set(poss[0])
+            """
             
         return possible_pun_words
 
@@ -84,8 +86,9 @@ if __name__ == "__main__":
     print(text_ids[2])
     print(original_sentences[2])
     print(sentences[2])
+    print(get_possible_pun_words(sentences[2]))
 
-    with open("task2_DungLe.txt", "w") as file:
+    with open("task2_DungLe_top3_all.txt", "w") as file:
         for i in range(len(sentences)):
             result = text_ids[i] + " " + text_ids[i] + "_" + str(get_pun_word(original_sentences[i], sentences[i])) + "\n"
             file.write(result)

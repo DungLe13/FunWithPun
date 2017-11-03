@@ -26,6 +26,7 @@ stop_words.update('.', '?', '-', '\'', '\:', ',', '!', '<', '>', '\"', '/', '(',
                   '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 #print(stop_words)
 
+"""
 for child in root:
     count += 1
     print("hom_" + str(count), end=' ')
@@ -37,3 +38,5 @@ for child in root:
         if tagged_word[0][0] not in stop_words:
             print(tagged_word, end=' ')
     print()
+"""
+
