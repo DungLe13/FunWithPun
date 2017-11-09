@@ -12,7 +12,7 @@ from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 
 def get_random_pun_word():
-    with open("task2_baseline1_random.txt", "w") as file:
+    with open("baselines/task2_baseline1_random.txt", "w") as file:
         for child in root:
             text_id = child.attrib['id']
             rand_pun_number = random.randint(1, len(child)-1)
@@ -21,7 +21,7 @@ def get_random_pun_word():
     file.close()
 
 def get_last_word():
-    with open("task2_baseline2_last.txt", "w") as file:
+    with open("baselines/task2_baseline2_last.txt", "w") as file:
         for child in root:
             text_id = child.attrib['id']
             last_word_number = len(child) - 1
@@ -30,7 +30,7 @@ def get_last_word():
     file.close()
 
 def get_word_with_most_senses():
-    with open("task2_baseline3_mostsenses.txt", "w") as file:
+    with open("baselines/task2_baseline3_mostsenses.txt", "w") as file:
         for child in root:
             senses_number = 0
             prev_word_id = ""
