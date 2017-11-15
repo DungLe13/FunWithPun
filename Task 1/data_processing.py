@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    task1.py - Task 1: Pun Detection using word2vec and RNN with LSTM cells
+    data_processing.py - Task 1: Pun Detection using word2vec and RNN with LSTM cells
     Author: Dung Le (dungle@bennington.edu)
     Date: 11/7/2017
 """
@@ -8,7 +8,7 @@
 import xml.etree.ElementTree as ET
 import gensim
 import tensorflow as tf
-import pickle
+import numpy as np
 
 # Load Google's pre-trained Word2Vec model.
 model = gensim.models.KeyedVectors.load_word2vec_format('../sample/GoogleNews-vectors-negative300.bin', binary=True)
@@ -53,15 +53,14 @@ for child in root1:
 
 for i in range(len(original_sentences)):
     # Input x for one sentence: containing all the word vectors of the sentence
-    input_list = []
+    sent_list = []
     for w in original_sentences[i]:
         if w in vocab:
-            word_list = model.wv[w].tolist()
-            input_list.append(word_list)
-
-    input_vec = tf.Variable(input_list)
-    input_x.append(input_vec)
-
+            word_vec = model.wv[w]
+            sent_list.append(word_vec)
+            
+    input_x.append(sent_list)
+    
 def get_train_and_test_data(test_size=0.2):
     testing_size = int(test_size * len(original_sentences))
 
@@ -74,8 +73,8 @@ def get_train_and_test_data(test_size=0.2):
     return train_x, train_y, test_x, test_y
 
 train_x, train_y, test_x, test_y = get_train_and_test_data()
-print(train_x[0])
+print(len(train_x[0]))
 print(train_y[0])
-print(test_x[0])
+print(len(test_x[0]))
 print(test_y[0])
 

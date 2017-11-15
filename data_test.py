@@ -5,18 +5,14 @@
     Date: 10/17/2017
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import xml.etree.ElementTree as ET
 import nltk
 from nltk.corpus import stopwords
 
-import numpy as np
-import tensorflow as tf
+from nltk.tag.stanford import StanfordPOSTagger
 
 count = 0
+st = StanfordPOSTagger('english-bidirectional-distsim.tagger')
 
 tree = ET.parse('sample/subtask1-homographic-test.xml')
 root = tree.getroot()
@@ -26,17 +22,15 @@ stop_words.update('.', '?', '-', '\'', '\:', ',', '!', '<', '>', '\"', '/', '(',
                   '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 #print(stop_words)
 
-"""
 for child in root:
     count += 1
     print("hom_" + str(count), end=' ')
     for i in range(len(child)):
         # POS tagging
         words = nltk.word_tokenize(child[i].text.lower())
-        tagged_word = nltk.pos_tag(words)
+        tagged_word = st.tag(words)
 
         if tagged_word[0][0] not in stop_words:
             print(tagged_word, end=' ')
     print()
-"""
 

@@ -92,7 +92,7 @@ def search_most_probable_word_in_gloss(word, pun_word):
 
 if __name__ == "__main__":
     # Load Google's pre-trained Word2Vec model.
-    model = gensim.models.KeyedVectors.load_word2vec_format('sample/GoogleNews-vectors-negative300.bin', binary=True)
+    model = gensim.models.KeyedVectors.load_word2vec_format('../sample/GoogleNews-vectors-negative300.bin', binary=True)
     
     stop_words = set(stopwords.words('english'))
     stop_words.update('.', '?', '-', '\'', '\:', ',', '!', '<', '>', '\"', '/', '(', ')',
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     vocab = model.vocab.keys()
 
     # Load dataset from xml file (task 2)
-    tree = ET.parse('sample/subtask3-homographic-test.xml')
+    tree = ET.parse('../sample/subtask3-homographic-test.xml')
     root = tree.getroot()
     sentences = []
     text_ids= []
@@ -114,9 +114,8 @@ if __name__ == "__main__":
         sentences.append(sentence)
 
     pun_words = get_pun_word()
-    with open("Task 3/predictions/task3_sense1_attempt2.txt", "w") as file:
+    with open("predictions/task3_sense1.txt", "w") as file:
         for i in range(len(sentences)):
-            '''
             first_attempt = search_most_probable_word_in_gloss(get_most_probable_word(sentences[i], pun_words[i]), pun_words[i])
             if first_attempt:
                 lemmas = wn.synset(first_attempt.name()).lemmas()
@@ -124,14 +123,13 @@ if __name__ == "__main__":
                     first_sense = lemmas[0].key()
                     file.write(first_sense + '\n')
             else:
-            '''
-            second_attempt = simplified_lesk(pun_words[i], sentences[i])
-            if second_attempt:
-                lemmas = wn.synset(second_attempt.name()).lemmas()
-                if lemmas:
-                    first_sense = lemmas[0].key()
-                    file.write(first_sense + '\n')
-            else:
-                file.write('none \n')
+                second_attempt = simplified_lesk(pun_words[i], sentences[i])
+                if second_attempt:
+                    lemmas = wn.synset(second_attempt.name()).lemmas()
+                    if lemmas:
+                        first_sense = lemmas[0].key()
+                        file.write(first_sense + '\n')
+                else:
+                    file.write('none \n')
     file.close()
     
