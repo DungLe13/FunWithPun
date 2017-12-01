@@ -56,7 +56,7 @@ for i in range(len(original_sentences)):
     sent_list = []
     for w in original_sentences[i]:
         if w in vocab:
-            word_vec = model.wv[w]
+            word_vec = model.wv[w].tolist()
             sent_list.append(word_vec)
             
     input_x.append(sent_list)
