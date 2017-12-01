@@ -63,7 +63,7 @@ targets = Variable(torch.Tensor(train_y))
 # MODEL
 class LSTMClassifier(nn.Module):
 
-    def __init__(self, embedding_dim, hidden_dim, num_classes=1):
+    def __init__(self, embedding_dim, hidden_dim, num_classes=2):
         super(LSTMClassifier, self).__init__()
         self.hidden_dim = hidden_dim
 
@@ -80,7 +80,7 @@ class LSTMClassifier(nn.Module):
                 autograd.Variable(torch.zeros(1, 1, self.hidden_dim)))
 
     def forward(self, embeds):
-        lstm_out, self.hidden = self.lstm(Variable(embeds), self.hidden)
+        lstm_out, self.hidden = self.lstm(Variable(embeds, requires_grad=True), self.hidden)
         classify_space = self.hidden2classifier(lstm_out.view(len(embeds), -1))
         classify_scores = F.softmax(classify_space)
         return classify_scores[-1]
@@ -92,12 +92,11 @@ optimizer = optim.SGD(model.parameters(), lr=0.1)
 
 # See what the scores are before training
 # Note that element i,j of the output is the score for tag j for word i.
-"""
 print("============ BEFORE ===============")
 inputs = train_x_seq[0]
 last_score = model(inputs)
 print(last_score)
-"""
+
 for epoch in range(5):
     for i in range(len(train_x_seq)):
         # STEP 1. Remember that Pytorch accumulates gradients.
@@ -110,12 +109,10 @@ for epoch in range(5):
 
         # STEP 2. Since inputs are in the right shape, run the forward propagation
         classify_score = model(train_x_seq[i])
-        # binary_score = (classify_score[0] > classify_score[1]).float()
-        # print(binary_score)
 
         # STEP 3. Compute the loss, gradients, and update the parameters by
         # calling optimizer.step()
-        loss = loss_function(classify_score, targets[i])
+        loss = loss_function(classify_score.unsqueeze(0)[:,1], targets[i])
         loss.backward()
         optimizer.step()
 """
@@ -129,4 +126,4 @@ for sent_tensor in train_x_seq:
     last_score = model(sent_tensor)
     train_results.append(last_score.data[0])
 
-print(train_results)
+# print(train_results)
