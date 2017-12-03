@@ -46,7 +46,7 @@ for child in root1:
 # The dimension of word embeddings, which is 300 (features)
 EMBEDDING_DIM = 300
 # hidden_dim = dimension of hidden layers
-HIDDEN_DIM = 40
+HIDDEN_DIM = 150
 
 # PREPARING FOR THE INPUT AND OUPUT SEQUENCE
 train_x_seq = []
@@ -56,9 +56,6 @@ for sent_vec in train_x:
     train_x_seq.append(input_sent)
 
 targets = Variable(torch.Tensor(train_y))
-# print(targets[0])
-# print(train_x_seq[0])
-# print(len(train_x_seq[0]))
 
 # MODEL
 class LSTMClassifier(nn.Module):
@@ -93,11 +90,11 @@ optimizer = optim.SGD(model.parameters(), lr=0.1)
 # See what the scores are before training
 # Note that element i,j of the output is the score for tag j for word i.
 print("============ BEFORE ===============")
-inputs = train_x_seq[0]
+inputs = train_x_seq[5]
 last_score = model(inputs)
 print(last_score)
 
-for epoch in range(5):
+for epoch in range(20):
     for i in range(len(train_x_seq)):
         # STEP 1. Remember that Pytorch accumulates gradients.
         # We need to clear them out before each instance
@@ -115,15 +112,45 @@ for epoch in range(5):
         loss = loss_function(classify_score.unsqueeze(0)[:,1], targets[i])
         loss.backward()
         optimizer.step()
-"""
+
 print("============ AFTER ===============")
-inputs = train_x_seq[0]
+inputs = train_x_seq[5]
 last_score = model(inputs)
 print(last_score)
-"""
+
+'''
 train_results = []
 for sent_tensor in train_x_seq:
     last_score = model(sent_tensor)
-    train_results.append(last_score.data[0])
+    if (last_score[0] > last_score[1]).data[0]:
+        train_results.append(0)
+    elif (last_score[0] < last_score[1]).data[0]:
+        train_results.append(1)
 
-# print(train_results)
+print(train_results)
+'''
+# TESTING ON TEST SEQUENCE
+test_x_seq = []
+for sent_vec in test_x:
+    sent_tensor = torch.Tensor(sent_vec)
+    test_sent = sent_tensor.view(len(sent_vec), 1, EMBEDDING_DIM)
+    test_x_seq.append(test_sent)
+    
+test_results = []
+for sent_tensor in test_x_seq:
+    last_score = model(sent_tensor)
+    if (last_score[0] > last_score[1]).data[0]:
+        test_results.append(0)
+    elif (last_score[0] < last_score[1]).data[0]:
+        test_results.append(1)
+
+with open('results/train_80_test_20/hidden_150_epoch_20.txt', 'w') as file:
+    for item in test_results:
+        file.write("%d\n" % item)
+file.close()
+'''
+with open('results/train_20_test_80/test_y.txt', 'w') as legit_file:
+    for item in test_y:
+        legit_file.write("%d\n" % item)
+legit_file.close()
+'''
