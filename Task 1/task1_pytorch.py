@@ -25,20 +25,6 @@ Note to self:
 3. train_y is a list constitutes of 0s and 1s
 """
 
-# Load dataset from xml file (task 1)
-tree1 = ET.parse('../sample/subtask1-homographic-test.xml')
-root1 = tree1.getroot()
-original_sentences = []
-text_ids= []
-
-for child in root1:
-    original_sentence = []
-    text_id = child.attrib['id']
-    for i in range(len(child)):
-        original_sentence.append(child[i].text.lower())
-    original_sentences.append(original_sentence)
-    text_ids.append(text_id)
-
 """
     RECURRENT NEURAL NETWORK with LONG-SHORT TERM MEMORY CELLS
 """
