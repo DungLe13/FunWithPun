@@ -9,9 +9,13 @@ import xml.etree.ElementTree as ET
 import gensim
 import tensorflow as tf
 import numpy as np
+from retrained_word2vec import sentences
 
 # Load Google's pre-trained Word2Vec model.
 model = gensim.models.KeyedVectors.load_word2vec_format('../sample/GoogleNews-vectors-negative300.bin', binary=True)
+
+# Load retrained model (trained on pun data)
+# model = gensim.models.Word2Vec.load('pun_model')
 
 # Load dataset from xml file (task 1)
 tree1 = ET.parse('../sample/subtask1-homographic-test.xml')
@@ -20,7 +24,6 @@ root1 = tree1.getroot()
 # Load dataset from xml file (task 2)
 tree2 = ET.parse('../sample/subtask2-homographic-test.xml')
 root2 = tree2.getroot()
-vocab = model.vocab.keys()
 
 original_sentences = []
 text_ids= []
@@ -55,9 +58,11 @@ for i in range(len(original_sentences)):
     # Input x for one sentence: containing all the word vectors of the sentence
     sent_list = []
     for w in original_sentences[i]:
-        if w in vocab:
+        try:
             word_vec = model.wv[w].tolist()
             sent_list.append(word_vec)
+        except KeyError:
+            pass
             
     input_x.append(sent_list)
     
@@ -73,8 +78,4 @@ def get_train_and_test_data(test_size=0.2):
     return train_x, train_y, test_x, test_y
 
 train_x, train_y, test_x, test_y = get_train_and_test_data()
-print(len(train_x[0]))
-print(train_y[0])
-print(len(test_x[0]))
-print(test_y[0])
 

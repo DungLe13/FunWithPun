@@ -30,9 +30,9 @@ Note to self:
 """
 # PARAMETERS
 # The dimension of word embeddings, which is 300 (features)
-EMBEDDING_DIM = 300
+EMBEDDING_DIM = 100
 # hidden_dim = dimension of hidden layers
-HIDDEN_DIM = 150
+HIDDEN_DIM = 50
 
 # PREPARING FOR THE INPUT AND OUPUT SEQUENCE
 train_x_seq = []
@@ -73,14 +73,9 @@ model = LSTMClassifier(EMBEDDING_DIM, HIDDEN_DIM)
 loss_function = nn.BCELoss()
 optimizer = optim.SGD(model.parameters(), lr=0.1)
 
-# See what the scores are before training
-# Note that element i,j of the output is the score for tag j for word i.
 print("============ BEFORE ===============")
-inputs = train_x_seq[5]
-last_score = model(inputs)
-print(last_score)
 
-for epoch in range(20):
+for epoch in range(3):
     for i in range(len(train_x_seq)):
         # STEP 1. Remember that Pytorch accumulates gradients.
         # We need to clear them out before each instance
@@ -100,11 +95,9 @@ for epoch in range(20):
         optimizer.step()
 
 print("============ AFTER ===============")
-inputs = train_x_seq[5]
-last_score = model(inputs)
-print(last_score)
 
 '''
+# RESULTS ON TRAIN DATA
 train_results = []
 for sent_tensor in train_x_seq:
     last_score = model(sent_tensor)
@@ -115,6 +108,7 @@ for sent_tensor in train_x_seq:
 
 print(train_results)
 '''
+
 # TESTING ON TEST SEQUENCE
 test_x_seq = []
 for sent_vec in test_x:
@@ -130,11 +124,14 @@ for sent_tensor in test_x_seq:
     elif (last_score[0] < last_score[1]).data[0]:
         test_results.append(1)
 
+print(test_results)
+
+'''
 with open('results/train_80_test_20/hidden_150_epoch_20.txt', 'w') as file:
     for item in test_results:
         file.write("%d\n" % item)
 file.close()
-'''
+
 with open('results/train_20_test_80/test_y.txt', 'w') as legit_file:
     for item in test_y:
         legit_file.write("%d\n" % item)
